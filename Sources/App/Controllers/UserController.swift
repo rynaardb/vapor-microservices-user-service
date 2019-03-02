@@ -2,7 +2,6 @@ import Vapor
 import Crypto
 
 struct UserController: RouteCollection {
-    
     func boot(router: Router) throws {
         let usersRouter = router.grouped("users")
         
@@ -12,12 +11,11 @@ struct UserController: RouteCollection {
 }
 
 private extension UserController {
-    
     func register(_ req: Request, createRequest: CreateUserRequest) throws -> Future<HTTPStatus> {
         let userRepository = try req.make(UserRepository.self)
         return try userRepository.findCount(username: createRequest.username, email: createRequest.email, on: req).flatMap { count in
             guard count == 0 else {
-                throw Abort(.badRequest, reason: "A user with these credentials allready exists.")
+                throw Abort(.badRequest, reason: "A user with these credentials already exists.")
             }
             try createRequest.validate()
             let bcrypt = try req.make(BCryptDigest.self)
